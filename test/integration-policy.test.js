@@ -41,7 +41,7 @@ test('optional backup configuration and path failure cannot disable primary host
     data: { id: 'message', role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'Primary capture survives an invalid optional backup path.' }] } });
   assert.equal(adapter.store.listRaw().length, 1);
   const assembly = await handlers.get('system-prompt/assemble')({}, { agent, scope: agent }, async () => ({ sections: [] }));
-  assert.match(assembly.sections[0].text, /自动备份最近一次失败/);
+  assert.match(assembly.sections[0].text, /备份设置或最近操作需要检查；主记忆继续写入/);
   await adapter.close();
 });
 
