@@ -1,0 +1,18 @@
+{
+  "measuredOn": "2026-10-17",
+  "moduleVersion": "0.1.1",
+  "command": "node scripts/benchmark.js",
+  "node": "v24.21.0",
+  "platform": "win32",
+  "syntheticRecords": 500,
+  "appendMs": { "p50": 8.9987, "p95": 10.1392, "max": 67.0416 },
+  "searchMs": 17.9032,
+  "candidates": 4,
+  "flushMs": 82.1623,
+  "notes": [
+    "只使用临时目录中的合成记录，没有使用用户记忆",
+    "此轮在完整测试结束后单独运行，数字包含本机当时负载",
+    "仅测 appendRaw，不包含模型或宿主完整一轮延迟",
+    "不满足每次写入都低于 10ms 的硬性保证；不是跨设备性能承诺"
+  ]
+}
