@@ -1,0 +1,11 @@
+{
+  "id": "demo-user-001",
+  "sessionId": "demo-session",
+  "turnId": "demo-turn",
+  "pool": "a",
+  "role": "user",
+  "text": "如果我中了800万，我就买房。",
+  "occurredAt": null,
+  "project": "演示",
+  "tags": ["假设"]
+}
