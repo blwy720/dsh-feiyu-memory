@@ -1,0 +1,13 @@
+{
+  "requestId": "example-a2-review-request",
+  "reason": "示例模板：确认关键内容已进入实际存在的 A3 后，逐版本批准到期清理。",
+  "items": [
+    {
+      "id": "example-a2-conditional",
+      "version": 1,
+      "decision": "archived",
+      "a3Ids": ["example-a3-archive"],
+      "reason": "关键内容已由该 A3 覆盖；其他被标为未覆盖的 A2 不在本次批准内。"
+    }
+  ]
+}

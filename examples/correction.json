@@ -1,0 +1,10 @@
+{
+  "requestId": "example-correction",
+  "targets": [{"id": "example-a2-conditional", "version": 1}],
+  "changeType": "correction",
+  "status": "needs_review",
+  "reason": "模板：收到对原句主体的更正，保留旧内容并标记复核，不自动裁定新说法胜出。",
+  "sources": [
+    {"rawId": "example-correction-raw", "quote": "那句话是我在转述一个例子，不是我的个人计划。"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "example-a2-conditional",
+  "kind": "memory",
+  "statementType": "fact",
+  "text": "用户举过一个假设：如果中了800万就买房。并非实际中奖记录。",
+  "hooks": ["彩票", "800万", "买房", "假设"],
+  "sourceNature": "user_statement",
+  "sources": [{"rawId": "demo-user-001", "quote": "如果我中了800万，我就买房。", "support": "supports"}]
+}

@@ -1,0 +1,19 @@
+{
+  "requestId": "example-self-review",
+  "rawIds": ["demo-user-001"],
+  "reason": "合成演示：已逐字核对本批原文，只保留明确说过的条件句。",
+  "entries": [
+    {
+      "id": "example-a2-reviewed-conditional",
+      "kind": "memory",
+      "statementType": "fact",
+      "text": "示例用户说过如果中了800万就买房，没有报告已经中奖。",
+      "hooks": ["800万", "假设"],
+      "sourceNature": "user_statement",
+      "sources": [
+        {"rawId": "demo-user-001", "quote": "如果我中了800万，我就买房。", "support": "supports"}
+      ]
+    }
+  ],
+  "omissions": []
+}

@@ -1,0 +1,25 @@
+{
+  "requestId": "example-a3-request",
+  "id": "example-a3-archive",
+  "expectedVersion": 0,
+  "action": "write",
+  "reason": "合成演示：保留条件句的明确语义，不把假设当成中奖事实。",
+  "statementType": "fact",
+  "body": {
+    "time": "演示对话；假设事件的发生时间未知，原话没有报告实际中奖。",
+    "persons": ["示例用户"],
+    "event": "示例用户以中奖800万作为买房的条件，没有确认已经中奖或已经买房。"
+  },
+  "derivedFrom": ["example-a2-conditional"],
+  "coverage": {
+    "scope": [
+      {"id": "example-a2-conditional", "version": 1},
+      {"id": "example-a2-plan", "version": 1}
+    ],
+    "covered": ["example-a2-conditional"],
+    "notCovered": [{"id": "example-a2-plan", "reason": "阅读文档的计划属于另一个主题，留待单独审查。"}],
+    "scopeNote": "只审阅这里列出的两条合成 A2；不声称覆盖全库。"
+  },
+  "hooks": ["彩票", "800万", "买房", "假设"],
+  "tags": ["合成演示", "条件句"]
+}

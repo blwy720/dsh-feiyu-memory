@@ -1,0 +1,10 @@
+{
+  "id": "example-a2-plan",
+  "kind": "doing",
+  "statementType": "self_report",
+  "text": "合成演示计划：我准备阅读模块文档并核对配置。",
+  "hooks": ["记忆模块", "文档", "配置"],
+  "status": "pending",
+  "sources": [],
+  "sourceNature": "assistant_statement"
+}

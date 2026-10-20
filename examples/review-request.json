@@ -1,0 +1,5 @@
+{
+  "requestId": "example-early-review",
+  "rawIds": ["demo-user-001"],
+  "reason": "合成演示：提前核对条件句，防止将假设误记成实际发生。出现次数不作为入库理由。"
+}

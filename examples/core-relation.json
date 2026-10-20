@@ -1,0 +1,14 @@
+{
+  "requestId": "example-core-friend",
+  "id": "example-self-to-person",
+  "expectedVersion": 0,
+  "kind": "relation",
+  "from": "self",
+  "to": "example-person",
+  "rel": "朋友",
+  "text": "合成演示：我愿意把示例人物甲称作朋友。",
+  "statementType": "self_report",
+  "category": "relationship",
+  "reason": "仅记录 self 指向示例人物甲的称谓，不推导对方如何称呼 self。",
+  "sources": []
+}

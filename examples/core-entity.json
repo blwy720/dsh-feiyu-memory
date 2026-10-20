@@ -1,0 +1,12 @@
+{
+  "requestId": "example-core-person",
+  "id": "example-person",
+  "expectedVersion": 0,
+  "kind": "entity",
+  "text": "合成演示人物甲，供关系网示例使用。",
+  "statementType": "fact",
+  "category": "identity",
+  "reason": "合成测试节点，没有真实人物身份材料；不能当成已核实身份。",
+  "sources": [],
+  "aliases": ["示例人物甲"]
+}

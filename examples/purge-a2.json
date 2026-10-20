@@ -1,0 +1,5 @@
+{
+  "requestId": "example-admin-purge",
+  "items": [{"id": "example-a2-conditional", "version": 1}],
+  "reason": "管理员模板：仅在到期、审查批准并退出活动池等条件全部满足后，显式释放正文；先用不带 --apply 的 CLI 预览。"
+}

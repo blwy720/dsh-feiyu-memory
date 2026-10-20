@@ -1,0 +1,13 @@
+{
+  "requestId": "example-self-emotion",
+  "id": "example-emotion",
+  "expectedVersion": 0,
+  "action": "set",
+  "subject": "self",
+  "expressionKind": "emotion",
+  "topic": "被认真倾听",
+  "stance": "like",
+  "text": "合成演示：我因被认真倾听而高兴。",
+  "reason": "示范自身感受的明确自述，不替任何他人声明情绪。",
+  "sources": []
+}

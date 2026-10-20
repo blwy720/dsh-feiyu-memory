@@ -1,0 +1,20 @@
+{
+  "requestId": "example-neighbor-preference",
+  "id": "example-person-music",
+  "expectedVersion": 0,
+  "action": "set",
+  "subject": "example-person",
+  "expressionKind": "preference",
+  "topic": "安静的音乐",
+  "stance": "like",
+  "text": "示例人物甲明确说过自己喜欢安静的音乐。",
+  "reason": "模板：提交前须存在该 C 第一层人物及下列原文，并确认声明的主体归属。",
+  "declaration": {
+    "subject": "example-person",
+    "rawId": "example-preference-raw",
+    "quote": "示例人物甲说：我喜欢安静的音乐。"
+  },
+  "sources": [
+    {"rawId": "example-preference-raw", "quote": "示例人物甲说：我喜欢安静的音乐。", "support": "context_only"}
+  ]
+}

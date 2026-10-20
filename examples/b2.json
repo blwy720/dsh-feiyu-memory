@@ -1,0 +1,11 @@
+{
+  "requestId": "example-b2-request",
+  "id": "example-b2-discovery",
+  "expectedVersion": 0,
+  "action": "write",
+  "text": "示例模板：用这里记录网上冲浪时发现的关键内容，不复制网页全文。",
+  "judgment": "这是我的判断或疑问，与网页原文的事实陈述区分。",
+  "reason": "独处探索后显式保留一条短期笔记。",
+  "sources": [{"url": "https://example.org/replace-with-actual-source", "title": "请替换为实际阅读的来源"}],
+  "hooks": ["示例"]
+}
