@@ -1,0 +1,20 @@
+# 安装仅添加默认关闭的插件行，不打开记忆目录，也不采集任何会话。
+# 启用前填写专属目录和实例。profile 模式共享主会话，排除子代理；手机另用独立目录。
+- insert:
+    - id: feiyu-memory
+      name: dsh-feiyu-memory
+      disabled: true
+      config:
+        dataDir: ''
+        instanceId: ''
+        sessionScope: profile
+        participation: solitude
+        timezone: Asia/Shanghai
+        wakeMaxChars: 1800
+        coreMaxChars: 2400
+        preferenceMaxChars: 1600
+        recentTurnMaxChars: 8000
+        backupEnabled: false
+        backupDir: ''
+        backupIntervalDays: 1
+        backupSchedule: interval

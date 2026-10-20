@@ -1,0 +1,26 @@
+{
+  "name": "dsh-feiyu-memory",
+  "version": "0.5.0",
+  "description": "肥鱼记忆：三要素归档、主体与时间检索、关系网及可选异盘备份",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./store": "./lib/store.js",
+    "./tools": "./lib/tools.js",
+    "./lifecycle": "./lib/lifecycle.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "bin": { "feiyu-memory": "./scripts/cli.js" },
+  "files": ["lib", "scripts", "test", "data/dict", "docs", "examples", "README.md", "CHANGELOG.md", "cordis.patch.yml"],
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } },
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check.js",
+    "benchmark": "node scripts/benchmark.js"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
