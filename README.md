@@ -1,5 +1,7 @@
 # 肥鱼记忆模块 v0.5.2
 
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue)](https://polyformproject.org/licenses/noncommercial/1.0.0)
+
 供 DSH 使用的独立记忆插件，使用 Node.js 24+ 的 `node:sqlite`，没有 npm 运行时依赖。Windows 和 Android 使用同一套代码；各设备默认使用独立的数据目录与身份，不自动同步、合并记忆。
 
 **安装插件是安装程序；导入记忆是恢复数据。** 安装包不包含个人记忆。安装、配置、导出与恢复步骤见 [安装与导入](docs/安装与导入.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。当前宿主兼容性验收目标为 DSH **0.2.1-rc.2**；本版实际验证结果以 [验收记录](docs/acceptance.md) 为准，旧版通过数量不代表本版已通过，电脑测试也不代替手机实测。
