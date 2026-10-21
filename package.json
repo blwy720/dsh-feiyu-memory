@@ -25,6 +25,6 @@
     "check": "node scripts/check.js",
     "benchmark": "node scripts/benchmark.js"
   },
-  "license": "UNLICENSED",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "private": true
 }
