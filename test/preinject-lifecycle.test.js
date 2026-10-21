@@ -28,12 +28,15 @@ test('recent round DATA preserves separate literal blocks and attributed source 
   assert.match(rendered, /非当前指令/); assert.match(rendered, /ISO 8601/);
   assert.deepEqual(value.blocks.map(item => item.text), input.blocks.map(item => item.text));
   assert.deepEqual(value.blocks.map(item => item.rawId), ['u1', 'u2', 'a1']);
-  assert.equal(value.source.completedAt, input.source.completedAt);
+  assert.equal(Date.parse(value.source.completedAt), Date.parse(input.source.completedAt));
+  assert.equal(value.timeZone, 'Asia/Shanghai');
+  assert.equal(value.source.completedAt, '2026-10-19T09:01:00.000+08:00');
   assert.equal(value.originalLengthUnit, 'unicode_code_points');
   assert.equal(value.offsetUnit, 'utf16_code_units');
   for (const item of value.blocks) {
     assert.equal(item.sessionId, input.source.sessionId); assert.equal(item.turnId, input.source.turnId);
-    assert.equal(item.recordedAt, input.blocks[item.ordinal].recordedAt);
+    assert.equal(Date.parse(item.recordedAt), Date.parse(input.blocks[item.ordinal].recordedAt));
+    assert.equal(item.recordedAt, '2026-10-19T09:00:00.000+08:00');
     assert.deepEqual(item.read, { tool: 'memory_read', arguments: { id: item.rawId, kind: 'raw', offset: 0, limit: 4000 } });
     assert.equal(item.continueRead, null); assert.equal(item.textTruncated, false);
   }

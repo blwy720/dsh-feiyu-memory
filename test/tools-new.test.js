@@ -30,7 +30,7 @@ test('review queue exposes only due raw pointers with exact seven-day boundary a
   assert.equal(JSON.stringify(first).includes('synthetic old body'), false);
   const next = api.memory_review_queue({ offset: first.nextOffset, limit: 1 });
   assert.equal(next.items[0].rawId, 'boundary');
-  assert.equal(next.items[0].dueAt, '2026-10-18T04:00:00.000Z');
+  assert.equal(next.items[0].dueAt, '2026-10-18T12:00:00.000+08:00');
   assert.equal(next.items[0].read.tool, 'memory_read');
   assert.equal(api.memory_read(next.items[0].read.arguments).text, 'synthetic boundary body');
   assert.throws(() => api.memory_review_queue({ limit: 21 }), /limit/);
@@ -182,7 +182,7 @@ test('B3 preferences are self-reports with a dedicated CAS/idempotent API, separ
   assert.equal(read.sourceCount, 0);
   assert.equal(read.preferenceDecision.action, 'set');
   assert.equal(read.preferenceDecision.sourceVersion, 0);
-  assert.equal(read.preferenceDecision.asOf, '2026-10-18T04:00:00.000Z');
+  assert.equal(read.preferenceDecision.asOf, '2026-10-18T12:00:00.000+08:00');
   assert.deepEqual(api.memory_search({ pool: 'b3', q: '雨天环境' }).candidates.map(item => item.id), ['fish-weather']);
   assert.equal(api.memory_list({ type: 'preference' }).candidates[0].evidenceStatus, 'self_report');
   assert.deepEqual(api.memory_list({ pool: 'a2' }).candidates.map(item => item.id), ['user-preference']);

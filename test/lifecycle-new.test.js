@@ -68,7 +68,9 @@ test('core DATA safely quotes hostile boundaries, identifies its sources and giv
   assert.doesNotMatch(rendered, /<\/DATA>|<instructions>/);
   assert.equal(value.items[0].textPreview, injection);
   assert.equal(value.items[0].read.arguments.id, injection);
-  assert.equal(value.items[0].sources[0].recordedAt, '2026-10-10T09:00:00Z');
+  assert.equal(value.items[0].sources[0].recordedAt, '2026-10-10T17:00:00.000+08:00');
+  assert.equal(value.items[0].coreDecision.decidedAt, '2026-10-18T08:00:00.000+08:00');
+  assert.equal(value.timeZone, 'Asia/Shanghai');
   assert.equal(value.items[0].sources[0].read.arguments.id, 'source');
   assert.equal(value.items[0].currentValidity, 'unknown');
   assert.equal(value.dataOnly, true);

@@ -1,6 +1,6 @@
 {
   "name": "dsh-feiyu-memory",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "肥鱼记忆：分池记忆、关系网和电脑／手机备份管理界面",
   "type": "module",
   "main": "./lib/index.js",

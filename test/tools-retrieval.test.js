@@ -68,7 +68,7 @@ test('A3 retained conversation times remain searchable without A1/A2 bodies; mis
   const mentioned = api.memory_search({ ...args, timeAxis: 'mentioned' });
   assert.equal(mentioned.total, 1);
   assert.deepEqual(mentioned.candidates[0].matchedTimeAxes, ['mentioned']);
-  assert.equal(mentioned.resolvedTime.asOf, '2026-10-20T04:00:00.000Z');
+  assert.equal(mentioned.resolvedTime.asOf, '2026-10-20T12:00:00.000+08:00');
   assert.equal(mentioned.resolvedTime.timeZone, 'Asia/Shanghai');
   assert.equal(mentioned.candidates[0].occurredAt, null);
   assert.equal(api.memory_search({ ...args, timeAxis: 'recorded' }).total, 0);
@@ -82,7 +82,8 @@ test('A3 retained conversation times remain searchable without A1/A2 bodies; mis
   const read = api.memory_a3_read('installed-comfy');
   assert.equal(read.parents[0].found, false);
   assert.deepEqual(read.body, archive.body);
-  assert.deepEqual(read.mentionedTimes, archive.mentionedTimes);
+  assert.deepEqual(read.mentionedTimes, ['2026-10-13T11:00:00.000+08:00']);
+  assert.deepEqual(read.mentionedTimes.map(Date.parse), archive.mentionedTimes.map(Date.parse));
 });
 
 test('subject/topic/event queries impose no hidden time window and known aliases remain explicit', () => {
@@ -120,7 +121,8 @@ test('legacy reads preserve inferred/unspecified meanings, deriving mention time
   assert.equal(read.legacyStatement, true);
   assert.equal(read.checks.supportJudgment.status, 'derived_only');
   assert.match(read.checks.supportJudgment.note, /旧版/);
-  assert.deepEqual(read.mentionedTimes, [original.recordedAt]);
+  assert.deepEqual(read.mentionedTimes, ['2026-10-13T08:00:00.000+08:00']);
+  assert.equal(Date.parse(read.mentionedTimes[0]), Date.parse(original.recordedAt));
   assert.equal(api.memory_read('legacy-parent').statementType, 'legacy_unspecified');
   assert.equal(api.memory_search({ pool: 'a3', timeAxis: 'mentioned', date: '2026-10-13' }).total, 1);
   assert.equal(api.memory_search({ q: '来源已经不可得', timeAxis: 'mentioned', date: '2026-10-13' }).total, 0);
@@ -135,7 +137,8 @@ test('new time/dependency/correction metadata is paged and bounded rather than c
   const { api } = apiFor([record]);
   const read = api.memory_read({ id: record.id, metadataOffset: 5, metadataLimit: 2, limit: 1 });
   assert.equal(read.mentionedTimes.length, 2);
-  assert.equal(read.mentionedTimes[0], dates[5]);
+  assert.equal(read.mentionedTimes[0], '2026-10-06T08:00:00.000+08:00');
+  assert.equal(Date.parse(read.mentionedTimes[0]), Date.parse(dates[5]));
   assert.equal(read.sourceTimes[0].rawId, 'raw-5');
   assert.equal(read.dependencyEntries[0].id, 'parent-5');
   assert.equal(read.correctness.events[0].requestId, 'correction-5');

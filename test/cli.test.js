@@ -77,7 +77,7 @@ test('CLI exposes read pages, historical versions and rebuilds missing day/wake 
     assert.equal(existsSync(day), true);
     assert.equal(existsSync(wake), true);
     assert.match(readFileSync(day, 'utf8'), /pages-raw/);
-    assert.equal(run('doctor').moduleVersion, '0.5.0');
+    assert.equal(run('doctor').moduleVersion, '0.5.2');
     writeFileSync(input, JSON.stringify({ ids: ['pages-raw'], decision: 'discard', reason: 'synthetic deletion recovery' }));
     run('review', ['--input', input]);
     run('slide', ['--apply']);

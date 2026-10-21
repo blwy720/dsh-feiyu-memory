@@ -75,6 +75,18 @@ test('first human claim before committed user message selects one durable latest
   assert.ok(first.sections.some(section => section.name === PREFERENCE_SECTION));
 });
 
+test('host forwards configured timezone to recent-turn display without changing captured originals', async t => {
+  const f = fixture(t, { timezone: 'Asia/Kathmandu' }), source = f.add('source'), target = f.add('target');
+  f.round(source); f.start(target); f.claim(target);
+  const before = f.store.listRaw();
+  const text = f.recent(await f.assemble(target)).text;
+  const payload = JSON.parse(text.slice(text.indexOf('\n') + 1));
+  assert.equal(payload.timeZone, 'Asia/Kathmandu');
+  assert.match(payload.source.completedAt, /\+05:45$/);
+  assert.equal(Date.parse(payload.source.completedAt), source.session.events.at(-1).time);
+  assert.deepEqual(f.store.listRaw(), before);
+});
+
 test('solitude and injected input types never claim a selection or read their content', async t => {
   const f = fixture(t), source = f.add('source'); f.round(source);
   const target = f.add('target'); f.start(target);
