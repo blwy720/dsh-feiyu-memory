@@ -4,7 +4,7 @@
 
 供 DSH 使用的独立记忆插件，使用 Node.js 24+ 的 `node:sqlite`，没有 npm 运行时依赖。Windows 和 Android 使用同一套代码；各设备默认使用独立的数据目录与身份，不自动同步、合并记忆。
 
-**安装插件是安装程序；导入记忆是恢复数据。** 安装包不包含个人记忆。安装、配置、导出与恢复步骤见 [安装与导入](docs/安装与导入.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。当前宿主兼容性验收目标为 DSH **0.2.1-rc.2**；本版实际验证结果以 [验收记录](docs/acceptance.md) 为准，旧版通过数量不代表本版已通过，电脑测试也不代替手机实测。
+**安装插件是安装程序；导入记忆是恢复数据。** 安装包不包含个人记忆。安装、配置、导出与恢复步骤见 [安装与导入](docs/安装与导入.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。兼容 DSH **0.2.1-rc.2**，并已通过 **0.2.1-rc.3 的 Windows 隔离兼容验证（369 项通过）**；v0.6.0 程序包无需更换。rc.2 已在 Windows／Android 验证；rc.3 尚未完成升级后的桌面 GUI 与 Android 实机验收。详细范围见 [验收记录](docs/acceptance.md)。
 
 代码仓库：[blwy720/dsh-feiyu-memory](https://github.com/blwy720/dsh-feiyu-memory)。发布包入口：[最新 Release](https://github.com/blwy720/dsh-feiyu-memory/releases/latest)；以发布页实际提供的版本、安装包和校验值为准。
 
