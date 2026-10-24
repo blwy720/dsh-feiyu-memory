@@ -35,7 +35,7 @@ function storeFor(entries) {
 test('50-person graph spends the unchanged budget on the named neighbour, with explicit people/edge and omission counts', () => {
   const entries = Array.from({ length: 50 }, (_, index) => {
     const suffix = String(index).padStart(2, '0');
-    return [entity(`person-${suffix}`, { text: index === 49 ? '北极豆包' : `棋友${suffix}`, aliases: index === 49 ? ['极光搭档'] : [] }),
+    return [entity(`person-${suffix}`, { text: index === 49 ? '北极豆包' : `棋友${suffix}`, displayName: index === 49 ? '北极豆包' : undefined, aliases: index === 49 ? ['极光搭档'] : [] }),
       relation(`edge-${suffix}`, `person-${suffix}`, { recordedAt: index === 0 ? '2026-10-24T00:00:00Z' : stamp })];
   }).flat();
   const store = storeFor(entries);

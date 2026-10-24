@@ -237,7 +237,8 @@ test('v2 dictionary stays immutable while new versions use v4 and v1 bytes remai
 test('revocation remains possible when a historical original has become unavailable', t => {
   const { store } = fixture(t);
   entity(store, 'user'); promote(store, 'user');
-  const mock = t.mock.method(store, 'getRaw', () => null);
+  // Fail the authoritative read, not getRaw's new derived navigation view.
+  const mock = t.mock.method(store, '_getRawRecord', () => null);
   const result = revoke(store, 'user');
   mock.mock.restore();
   assert.equal(result.pool, 'a2');

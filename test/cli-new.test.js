@@ -19,8 +19,8 @@ test('CLI v0.2 keeps self-review/core/graph distinct from administrative retenti
       return expected === 0 ? JSON.parse(result.stdout) : result.stderr;
     };
     const version = spawnSync(process.execPath, [cli, '--version'], { encoding: 'utf8' });
-    assert.equal(version.stdout.trim(), '0.6.0');
-    assert.equal(run('doctor').moduleVersion, '0.6.0');
+    assert.equal(version.stdout.trim(), '0.6.1');
+    assert.equal(run('doctor').moduleVersion, '0.6.1');
     run('append', [], { id: 'original', pool: 'a', role: 'user', sessionId: 'synthetic', text: '我是你的主人。', recordedAt: '2000-01-01T00:00:00Z' });
     assert.equal(run('review-queue').total, 1);
     const evidence = [{ rawId: 'original', quote: '我是你的主人。', support: 'supports' }];

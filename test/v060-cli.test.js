@@ -23,9 +23,9 @@ function fixture(t) {
 
 test('CLI version, doctor and JSON fetch/prepare/manage cover the v0.6 entry points', t => {
   const { run, call } = fixture(t);
-  assert.equal(run(['--version']).stdout.trim(), '0.6.0');
+  assert.equal(run(['--version']).stdout.trim(), '0.6.1');
   const doctor = call('doctor');
-  assert.equal(doctor.moduleVersion, '0.6.0'); assert.equal(doctor.schema, 7); assert.equal(doctor.dictVersion, 'v6');
+  assert.equal(doctor.moduleVersion, '0.6.1'); assert.equal(doctor.schema, 7); assert.equal(doctor.dictVersion, 'v6');
   call('append', { id: 'raw-user', pool: 'a', role: 'user', sessionId: 'main', turnId: 'turn-one', text: '今天装好了 ComfyUI', recordedAt: '2026-10-10T07:00:00Z' });
   call('append', { id: 'raw-assistant', pool: 'a', role: 'assistant', sessionId: 'main', turnId: 'turn-one', text: '随后确认启动日志。', recordedAt: '2026-10-10T07:00:01Z' });
   const fetched = call('fetch', { anchorId: 'raw-user' });

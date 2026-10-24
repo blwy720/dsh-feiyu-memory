@@ -1,6 +1,6 @@
 {
   "name": "dsh-feiyu-memory",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "肥鱼记忆：主动召回、D经验池、跨会话事项线与电脑／手机备份",
   "type": "module",
   "main": "./lib/index.js",

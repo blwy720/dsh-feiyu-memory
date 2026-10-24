@@ -88,7 +88,8 @@ test('core budgets disclose omitted entries; ordinary memories cannot enter C re
     assert.equal(value.total, 12);
     assert.equal(value.shown + value.omitted, value.total);
     assert.equal(value.truncated, value.omitted > 0);
-    assert.deepEqual(value.lookup, { tool: 'memory_list', arguments: { pool: 'c', status: 'active' } });
+    assert.deepEqual(value.lookup, { tool: 'memory_list', arguments: { pool: 'c', status: 'active' },
+      ifUnavailable: { tool: 'memory_tools', arguments: { names: ['memory_list'] } } });
     assert.ok(value.items.every(item => item.kind === 'entity' && item.detailsOmitted && !('text' in item)));
     assert.deepEqual(value.counts, { nodes: 12, relations: 0, shownNodes: value.shown, shownRelations: 0 });
     assert.equal(value.budgetOmitted, value.omitted);

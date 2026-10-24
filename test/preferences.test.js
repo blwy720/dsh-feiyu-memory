@@ -144,8 +144,10 @@ test('audit downgrades broken context only; source-free self reports survive aud
   raw(store);
   store.setPreference(request({ sources: [{ rawId: 'context', quote: '窗外下起了雨。' }] }));
   store.setPreference(request({ requestId: 'without-context', id: 'other' }));
-  const originalGetRaw = store.getRaw.bind(store);
-  const mock = t.mock.method(store, 'getRaw', id => id === 'context' ? null : originalGetRaw(id));
+  // A missing source is an immutable-storage fault; derived thread metadata
+  // on the public getRaw view must not influence evidence auditing.
+  const originalGetRaw = store._getRawRecord.bind(store);
+  const mock = t.mock.method(store, '_getRawRecord', id => id === 'context' ? null : originalGetRaw(id));
   const findings = store.audit();
   assert.equal(findings.length, 1); assert.equal(findings[0].scope, 'context');
   const current = store.getEntry('preference-rain');

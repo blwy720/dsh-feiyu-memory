@@ -9,7 +9,7 @@ import { buildWake, generateDay, runSlide, rebuildDerived } from '../lib/lifecyc
 import { exportBackup, restoreBackup, verifyBackup, readBackupStatus, createBackupScheduler } from '../lib/backup.js';
 import { sensitiveInventory } from '../lib/redaction.js';
 
-const help = `肥鱼记忆 v0.6.0（Node 24+，零运行时依赖；schema 7、字典 v6）
+const help = `肥鱼记忆 v0.6.1（Node 24+，零运行时依赖；schema 7、字典 v6）
 用法：node scripts/cli.js <命令> --data <专属目录> --instance <身份ID> [选项]
 
 init                   创建身份绑定的数据目录
@@ -145,7 +145,7 @@ export async function main(argv = process.argv.slice(2)) {
       }
     });
     if (v.help || positionals.length === 0 && !v.version) { console.log(help); return; }
-    if (v.version) { console.log('0.6.0'); return; }
+    if (v.version) { console.log('0.6.1'); return; }
     const command = positionals[0];
     const commands = ['init','append','search','read','list','fetch','prepare','manage','privacy-audit','write','review-queue','review-request','self-review','a3-write','a3-list','a3-read','a2-review-queue','a2-review','a2-cleanup','purge-a2','core','core-write','correct','preference','b2-write','b2-cleanup','graph','day-end','wake','slide','review','audit','dict','rebuild','doctor','export','import','restore','verify-backup','backup-status','backup-check'];
     if (positionals.length !== 1 || !commands.includes(command)) throw new Error(`未知命令：${positionals.join(' ')}；使用 --help`);
@@ -251,7 +251,7 @@ export async function main(argv = process.argv.slice(2)) {
       case 'audit': result = store.audit(); store.flush(); break;
       case 'dict': result = api.memory_dict(); break;
       case 'rebuild': result = {ok:true,...rebuildDerived(store)}; break;
-      case 'doctor': result = {moduleVersion:'0.6.0',schema:store.metadata().schema,dictVersion:'v6',node:process.version,platform:process.platform,sqlite:'available',instanceId:store.instanceId,dataDir:store.dataDir,timezone:store.timezone,encrypted:false,hostInstalledByThisCommand:false}; break;
+      case 'doctor': result = {moduleVersion:'0.6.1',schema:store.metadata().schema,dictVersion:'v6',node:process.version,platform:process.platform,sqlite:'available',instanceId:store.instanceId,dataDir:store.dataDir,timezone:store.timezone,encrypted:false,hostInstalledByThisCommand:false}; break;
     }
     if (['init','append','write','a3-write','a2-review','a2-cleanup','core','preference','b2-write','b2-cleanup','day-end','slide','review','audit','rebuild','doctor'].includes(command) || command === 'self-review' && v.action !== 'history') {
       result = Array.isArray(result)

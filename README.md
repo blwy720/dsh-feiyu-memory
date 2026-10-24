@@ -1,14 +1,16 @@
-# 肥鱼记忆模块 v0.6.0
+# 肥鱼记忆模块 v0.6.1
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue)](https://polyformproject.org/licenses/noncommercial/1.0.0)
 
 供 DSH 使用的独立记忆插件，使用 Node.js 24+ 的 `node:sqlite`，没有 npm 运行时依赖。Windows 和 Android 使用同一套代码；各设备默认使用独立的数据目录与身份，不自动同步、合并记忆。
 
-**安装插件是安装程序；导入记忆是恢复数据。** 安装包不包含个人记忆。安装、配置、导出与恢复步骤见 [安装与导入](docs/安装与导入.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。兼容 DSH **0.2.1-rc.2**，并已通过 **0.2.1-rc.3 的 Windows 隔离兼容验证（369 项通过）**；v0.6.0 程序包无需更换。rc.2 已在 Windows／Android 验证；rc.3 尚未完成升级后的桌面 GUI 与 Android 实机验收。详细范围见 [验收记录](docs/acceptance.md)。
+**安装插件是安装程序；导入记忆是恢复数据。** 安装包不包含个人记忆。安装、配置、导出与恢复步骤见 [安装与导入](docs/安装与导入.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。支持 DSH **0.2.1-rc.2 / 0.2.1-rc.3**；Windows 与 Android 使用同一安装包，实际验证的平台、宿主版本和范围见 [验收记录](docs/acceptance.md)。
 
 代码仓库：[blwy720/dsh-feiyu-memory](https://github.com/blwy720/dsh-feiyu-memory)。发布包入口：[最新 Release](https://github.com/blwy720/dsh-feiyu-memory/releases/latest)；以发布页实际提供的版本、安装包和校验值为准。
 
 v0.6.0 增加 D 经验池、每轮相关记忆召回、批量阅读与提炼、事项线、轻量复核和可选精简工具模式。常用操作和 JSON 示例见[工具与经验池](docs/工具与经验池.md)。它帮助肥鱼找到并整理已有资料；相关性分数、逐字引文和“已验证”声明都不等于程序已经证明现实中的事实。
+
+v0.6.1 修复人物名称显示、低预算批读和 B3 引用定位，补齐 A1 原文事项关联及工具启用提示，并减少泛词引发的无关召回。从 v0.6.0 升级继续使用 schema 7 和字典 v6，旧记忆无需重新导入。
 
 ## 在界面中管理备份
 
@@ -58,11 +60,13 @@ A3 保留轻量来源 ID、版本、哈希、时间与覆盖说明。来源正�
 
 `memory_correct` 对精确版本登记有引文依据的更正、争议或状态变化。更正可标为 `needs_review`、`superseded` 或 `disputed`；`state_change` 记录现状变化，不把当时真实的历史说法判成错误。A3 的固有来源，以及 C/B3 显式列出的 `dependencyEntries`，会传播待复核状态；不会猜测所有关联，也不会静默改写旧正文。更正引文仍只证明说过这些话，新说法不会自动成为最终裁决。
 
-v0.6.0 可以用 `memory_manage` 把精确版本关联到同一 `threadId` 事项线，或追加复核事件而不重写正文。`currentValidity: valid` 是上次复核的声明；同时检查 `reviewDue` 和 `dependencyReviewPending`，不能把已到期或依据变化的内容继续当作当前确定结论。合并目前只支持同类型的 A2 `memory` 或 `doing`，保留来源、版本和可撤销事件；不自动合并人物身份、关系或喜好持有者。
+可以用 `memory_manage` 把精确条目版本或 A1 原文 ID 关联到同一 `threadId` 事项线，或追加复核事件而不重写正文。原文事项关联只是可撤销的导航，不充当证据，不延长 A1 保留期；来源清理后明确显示不可用。`currentValidity: valid` 是上次复核的声明；同时检查 `reviewDue` 和 `dependencyReviewPending`，不能把已到期或依据变化的内容继续当作当前确定结论。合并目前只支持同类型的 A2 `memory` 或 `doing`，保留来源、版本和可撤销事件；不自动合并人物身份、关系或喜好持有者。
 
 ## 关系网与喜好归属
 
 C 的 `from → to` 表示该方向的关系称谓。反向称谓须另写一条边；查询可沿相连节点展开，但不会互换方向，也不会把闭环当成多份独立证据。人物以明确 ID 关联，别名只用于查询，不自动合并身份。
+
+人物节点可写 `displayName`（最多 48 字符、单行）。注入优先使用明确名称，其次短别名和旧版短文本；缺名称时显示“未命名人物（短 ID）”，完整 ID 仍保留用于准确定位，不从长描述猜名字。
 
 `memory_core_write` 可以直接记录 C 节点和边。推断必须带推理依据与不确定性，只留在 C 的相应性质下，不能借此绕过 A2/A3 的准入。`memory_core` 用于已有关系网条目的晋升或撤回；撤回仍被 C 边连接的节点前，先处理这些边。
 

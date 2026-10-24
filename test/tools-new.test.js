@@ -151,8 +151,12 @@ test('dictionary tool serves v6 while leaving the immutable v1/v2/v3/v4/v5 dicti
   const v5Text = readFileSync(v5Path, 'utf8');
   const dictionary = api.memory_dict();
   assert.equal(dictionary.version, 'v6');
-  assert.equal(dictionary.moduleVersion, '0.6.0');
-  assert.equal(dictionary.text, readFileSync(join(store.dataDir, 'dict', 'v6.md'), 'utf8'));
+  assert.equal(dictionary.moduleVersion, '0.6.1');
+  const baseV6 = readFileSync(join(store.dataDir, 'dict', 'v6.md'), 'utf8');
+  assert.ok(dictionary.text.startsWith(baseV6));
+  assert.equal(dictionary.supplementVersion, '0.6.1');
+  assert.match(dictionary.text.slice(baseV6.length), /0\.6\.1接口补充/u);
+  assert.equal(readFileSync(join(store.dataDir, 'dict', 'v6.md'), 'utf8'), baseV6);
   assert.match(dictionary.text, /A2/);
   assert.match(dictionary.text, /有向边/);
   store.flush();
