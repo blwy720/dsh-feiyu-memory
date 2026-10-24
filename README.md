@@ -1,4 +1,4 @@
-# 肥鱼记忆模块 v0.5.2
+# 肥鱼记忆模块 v0.6.0
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue)](https://polyformproject.org/licenses/noncommercial/1.0.0)
 
@@ -7,6 +7,8 @@
 **安装插件是安装程序；导入记忆是恢复数据。** 安装包不包含个人记忆。安装、配置、导出与恢复步骤见 [安装与导入](docs/安装与导入.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。当前宿主兼容性验收目标为 DSH **0.2.1-rc.2**；本版实际验证结果以 [验收记录](docs/acceptance.md) 为准，旧版通过数量不代表本版已通过，电脑测试也不代替手机实测。
 
 代码仓库：[blwy720/dsh-feiyu-memory](https://github.com/blwy720/dsh-feiyu-memory)。发布包入口：[最新 Release](https://github.com/blwy720/dsh-feiyu-memory/releases/latest)；以发布页实际提供的版本、安装包和校验值为准。
+
+v0.6.0 增加 D 经验池、每轮相关记忆召回、批量阅读与提炼、事项线、轻量复核和可选精简工具模式。常用操作和 JSON 示例见[工具与经验池](docs/工具与经验池.md)。它帮助肥鱼找到并整理已有资料；相关性分数、逐字引文和“已验证”声明都不等于程序已经证明现实中的事实。
 
 ## 在界面中管理备份
 
@@ -32,10 +34,13 @@
 | B2 | 独处冲浪的关键发现、自己的判断、外部网址元数据。首次写入后 14×24 小时到期；修改不续期，不保存网页全文。 |
 | B3 | 记忆拥有者自身的喜好与情感；另可保存 C 第一层人物明确表达的喜好，并标明持有者。 |
 | C | 只有人物／实例节点与有向关系边。可自主记录明确标注的推断；普通记忆和事项不能进入。 |
+| D | 学会的方法、经验与适用条件。区分学到、尝试过、声明验证成功，保留资料来源、验证记录与环境；设备或版本变化后可复核。 |
 
 `statementType: fact` 表示写入者把内容作为明确事实陈述，**不代表程序已核实事实**。例如原话“我给肥鱼装了 ComfyUI”可以保存为“用户说已安装”；原话本身不能证明运行环境已验收。`self_report` 保留自述的归属，不能改写成他人替当事人作出的判断。
 
 `quote_verified` 只表示引文逐字命中原始记录；引文是否支持结论仍须判断。A3 固定为 `derived_only`，重复提起、重复检索和助手复述都不会把它升级成独立证据。记忆工具结果及无法可靠区分来源的混合工具回声不会被重新当成原文证据。
+
+对助手复用已读取记忆的情况，程序保留显式来源链，并检测至少 20 个字符的逐句原样复用，标记已识别片段的派生来源。该规则不能识别所有改写、近义转述或遗漏的来源，不能据此保证所有复述都已被拦住。
 
 ## 提炼、归档与更正
 
@@ -52,6 +57,8 @@ A3 保留轻量来源 ID、版本、哈希、时间与覆盖说明。来源正�
 该显式释放也可能清理已满足审查条件、且没有其他存活引用或保留要求的来源原文；不是只删显示文件。逻辑清理不等于存储介质的安全擦除。
 
 `memory_correct` 对精确版本登记有引文依据的更正、争议或状态变化。更正可标为 `needs_review`、`superseded` 或 `disputed`；`state_change` 记录现状变化，不把当时真实的历史说法判成错误。A3 的固有来源，以及 C/B3 显式列出的 `dependencyEntries`，会传播待复核状态；不会猜测所有关联，也不会静默改写旧正文。更正引文仍只证明说过这些话，新说法不会自动成为最终裁决。
+
+v0.6.0 可以用 `memory_manage` 把精确版本关联到同一 `threadId` 事项线，或追加复核事件而不重写正文。`currentValidity: valid` 是上次复核的声明；同时检查 `reviewDue` 和 `dependencyReviewPending`，不能把已到期或依据变化的内容继续当作当前确定结论。合并目前只支持同类型的 A2 `memory` 或 `doing`，保留来源、版本和可撤销事件；不自动合并人物身份、关系或喜好持有者。
 
 ## 关系网与喜好归属
 
@@ -80,7 +87,7 @@ B3 的 `subject` 是喜好／情感的持有者，`target` 是可选的指向对
 
 时间过滤默认包含历史版本，模型工具可用 `includeHistory: false` 明确只查当前版本。无结果只是当前条件下没有找到；若需要扩大日期、改用其他时间轴或关键词，应明确发起下一次查询，不能据此断言事情没发生。
 
-检索先返回短候选，再用 `memory_read` 分页展开。正文默认 4,000、最多 16,000 个 UTF-16 码元；引文、来源、覆盖与较长元数据单独分页，返回续读位置。不能把截断内容当成完整记录。
+检索先返回短候选，再用 `memory_fetch` 批量展开，或用 `memory_read` 的 `body`／`evidence`／`history` 视图分别阅读。旧 `memory_read` 默认完整视图兼容，正文默认 4,000、最多 16,000 个 UTF-16 码元；长正文与来源可分页，不能把截断内容当成完整记录。`memory_search` 可加 `fuzzy:true` 补充有限的错字候选；模糊匹配不会放宽逐字引用验证或自动合并同名人物。
 
 ## 新会话会带入什么
 
@@ -88,7 +95,17 @@ B3 的 `subject` 是喜好／情感的持有者，`target` 是可选的指向对
 
 来源选择在首轮固定，多次装配、重试和重启不重选；第二轮移除原文区。中断轮、子代理、独处、纯工具轮次及不完整原文不入选。只从仍处于七天活动范围的 A1 选择；已选来源过期或缺失时如实报告不可用，不悄悄替换为另一段。旧日志补核仅处理有界候选，不能保证穷尽所有旧对话。
 
-C 关系与有效 B3 资料有独立、带预算的 DATA 区，历史资料不是执行指令。A2/A3 正文按需检索，不自动常驻注入；醒来条只给地图、队列、计数与查询路线。没有真人“回忆关键词”也可以按需要查记忆。
+C、B3 和每轮相关召回各有独立、带预算的 DATA 区。C/B3 使用紧凑卡片，优先保留少量自身连续性信息及当前话题相关项，出处和决策详情按需展开。C 的总条数包括人物节点与关系边，分别返回 `counts.nodes`、`counts.relations`，不能把“9 条”理解成“9 个人”。`shown` 是已显示条目；其余数量分别说明待核查、超出主体范围、未选入当前话题或预算不足，不伪装成整库已读。
+
+`autoRecall` 默认开启：收到真人消息后，按当前话题和有限上下文查找相关候选，默认最多 5 条、2400 字符。A1、A2、A3、B2、B3、C、D 中符合条件的内容可以按相关性出现；不会每轮塞入整个池。首轮“最近完成一轮 A1 原文”与此召回区分开，仍只预注入一次。没有“我记得”等关键词也可召回；招呼或缺乏实质线索时可以没有结果。候选带来源性质和读取指针，历史资料不是新的执行指令。
+
+默认检索使用本地关键词、别名与有限错字匹配，不调用额外模型、不产生检索 API 费用。需要更深入查阅时，肥鱼仍可主动查询或打开事项线；自动召回不保证每次都找全，未命中不能证明没有发生。
+
+### 可选语义辅助
+
+高级用户可设置 `semanticEndpoint`、`semanticModel` 和可选 `semanticApiKeyEnv`（环境变量名，不是密钥本身），使用兼容 embeddings 接口的服务。默认留空关闭。启用后会发送脱敏、截断后的当前查询与精炼候选文本给指定服务，可能产生其 API 费用；本机服务也会占用本机资源。A1 原文候选保留本地检索，不用于该向量请求。
+
+当前语义范围是最多 64 条当前精炼条目，加上本地词法候选，合计最多 80 条，不是整库向量索引；脱敏模式也不能保证识别所有私人内容。单次默认等待 1500ms，可通过 `semanticTimeoutMs` 调整为 100～5000ms；超时、凭据缺失或服务失败时回退本地结果。远程地址须 HTTPS，本机回环地址可 HTTP。相似度不是事实验证。
 
 ## 初次配置
 
@@ -101,6 +118,10 @@ C 关系与有效 B3 资料有独立、带预算的 DATA 区，历史资料不�
   "timezone": "Asia/Shanghai",
   "sessionScope": "profile",
   "participation": "interactive",
+  "toolMode": "compact",
+  "autoRecall": true,
+  "recallLimit": 5,
+  "recallMaxChars": 2400,
   "wakeMaxChars": 1800,
   "coreMaxChars": 2400,
   "preferenceMaxChars": 1600,
@@ -113,6 +134,14 @@ C 关系与有效 B3 资料有独立、带预算的 DATA 区，历史资料不�
 
 `profile` 表示当前配置中获准的实时主会话共享这一份记忆，子代理不共享。兼容默认 `owner` 要求明确 `ownerSessionId`。`interactive` 才保存真人参与轮次的 A1；安装补丁中的默认 `solitude` 只保存 B 统计。实例 ID 与时区绑定到数据目录，不可随意更换。不要在同一宿主重复启用注册同名工具的插件行。
 
+新配置模板使用 `toolMode: compact`；旧配置未写该字段时保持 `compatible`。设置 `autoRecall:false` 可关闭每轮相关召回，不关闭首轮最近一轮原文、C/B3 或主动记忆工具。
+
+## 新采集内容与历史隐私
+
+新 A1 文本在进入本模块存储前，对已知密钥、令牌、私钥和凭据模式做脱敏。相关召回卡片也过滤已识别模式；这不等于全部历史读取接口都已清洗。规则可能漏检或误判，不是任意秘密识别器；逐字引用应以插件实际保存的脱敏文本为准。
+
+升级不会回写既有 A1、旧导出或旧备份，也不清理 DSH 自己保存的聊天历史。可运行 `privacy-audit --data <目录>` 只读统计当前 SQLite 已知权威文本中的敏感模式，报告只含数量，不打印秘密正文；旧备份、派生文件和宿主聊天记录需要另外处理。备份恢复校验不等于隐私检查，分享时仍只分享程序包。
+
 ## 备份与恢复边界
 
 自动备份默认关闭。可配置每 1～30 天或按自然月检查到期；只维护一个 `latest.feiyu-backup`，新包校验成功后安全替换，不保留自动历史版本。目的目录可选另一个物理磁盘，也可以是其他合适位置；模块不自动识别物理磁盘，不同时写多个备份目标。
@@ -123,9 +152,13 @@ C 关系与有效 B3 资料有独立、带预算的 DATA 区，历史资料不�
 
 ## 工具与 CLI
 
+精简模式开始只显示 `memory_search`、`memory_fetch`、`memory_prepare`、`memory_manage`、`memory_review` 和发现入口 `memory_tools`。调用 `memory_tools({"names":["memory_preference"]})` 按需开启；开启只注册工具，不执行写入，本次插件运行内有效。兼容模式启动时保留全部 23 个业务工具。完整用法见[工具与经验池](docs/工具与经验池.md)。
+
 | 用途 | 模型工具 |
 | --- | --- |
 | 查找与阅读 | `memory_search`、`memory_list`、`memory_read`、`memory_dict` |
+| 简洁批读、写前定位 | `memory_fetch`、`memory_prepare` |
+| D、事项线、复核、合并、进度日报 | `memory_manage` |
 | A2 写入与原文自审 | `memory_write`、`memory_review_request`、`memory_review_queue`、`memory_review` |
 | A3 归档 | `memory_a3_write`、`memory_a3_list`、`memory_a3_read` |
 | A2 清理审查 | `memory_a2_review_queue`、`memory_a2_review`、`memory_a2_cleanup` |
@@ -142,9 +175,13 @@ node scripts/cli.js write --data .memory/demo --instance demo --input examples/m
 node scripts/cli.js search --data .memory/demo --instance demo --query "800万"
 node scripts/cli.js list --data .memory/demo --instance demo --axis mentioned --time-window last_week
 node scripts/cli.js read --data .memory/demo --instance demo --id example-a2-conditional
+node scripts/cli.js read --data .memory/demo --instance demo --id example-a2-conditional --view body
+node scripts/cli.js privacy-audit --data .memory/demo --instance demo
 ```
 
 `--input -` 从标准输入读取 UTF-8 JSON。完整参数见 `node scripts/cli.js --help`。普通命令使用 `--data`、`--instance`；备份、验证与导入的例外以及绝对路径要求见安装文档。
+
+`fetch`、`prepare`、`manage` 接受对应工具的 JSON 参数，例如把 `{"action":"progress"}` 保存为 UTF-8 的 `progress.json`，运行 `node scripts/cli.js manage --data .memory/demo --instance demo --input progress.json`。`fetch` 续读游标只存在于当前插件运行实例，不能跨独立 CLI 进程复用；CLI 阅读长正文请固定 ID／版本，用 `read --offset ... --limit ...` 继续。
 
 `self-review` 是内容提炼审查；旧 `review` 是管理员原文保留／丢弃审核，两者不同。原始 `append`、进一步释放正文的 `purge-a2`、备份和恢复都没有模型工具入口。`examples/` 中其余 JSON 是合成数据或模板，涉及的原文、ID、版本、关系及到期条件必须真实存在才能提交。
 
@@ -161,7 +198,7 @@ node scripts/cli.js read --data .memory/demo --instance demo --id example-a2-con
 
 ## 升级与验证
 
-本版数据库为 schema 6、字典为 v5，旧字典保留。升级不会自动把旧记忆变成新 A3、把推断改为事实，或释放未审查的 A2。升级前先生成并验证独立备份，停止旧写入方，再更新代码。回退程序不等于回退数据，旧版不得直接打开不兼容的新库。
+本版数据库为 schema 7、字典为 v6，旧字典及旧条目性质保留。升级不会自动把旧记忆变成新 A3、把推断改为事实，或释放未审查的 A2。升级前保留旧代码、宿主插件配置和已验证的数据快照，停止旧写入方，再更新代码；不要把私人配置放入公开包。若回退，必须把升级前兼容快照恢复到新目录并搭配原代码／配置使用，旧代码不得直接打开已经升级到 schema 7 的库。
 
 SQLite 是权威数据；JSON、Markdown 与索引是可重建投影。若写入返回 `committed: true`、`projectionPending: true`，表示提交已成功、派生文件待修复，不应重复制造新版本。正常启动或 `rebuild` 可重试修复。
 

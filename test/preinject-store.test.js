@@ -233,11 +233,11 @@ test('schema6 migration preserves reference tables and all canonical payloads an
   const tables = ['raw', 'receipts', 'captures', 'entries', 'evidence']; const before = contents(store, tables);
   const dictionaries = ['v1', 'v2', 'v3'].map(version => fs.readFileSync(path.join(dataDir, `dict/${version}.md`), 'utf8'));
   store.db.prepare("UPDATE meta SET value=json_set(value,'$.schema',4) WHERE key='identity'").run(); store.close();
-  const reopened = open(); assert.equal(reopened.metadata().schema, 6); assert.deepEqual(contents(reopened, tables), before);
+  const reopened = open(); assert.equal(reopened.metadata().schema, 7); assert.deepEqual(contents(reopened, tables), before);
   assert.deepEqual(['v1', 'v2', 'v3'].map(version => fs.readFileSync(path.join(dataDir, `dict/${version}.md`), 'utf8')), dictionaries);
   assert.equal(dictionaries[1], DICTIONARY_V2); assert.equal(dictionaries[2], DICTIONARY_V3);
   assert.equal(fs.readFileSync(path.join(dataDir, 'dict/v4.md'), 'utf8'), DICTIONARY_V4);
-  assert.equal(reopened.writeEntry({ id: 'new', kind: 'memory', text: '新记忆', sources: [] }).dictVersion, 'v5');
+  assert.equal(reopened.writeEntry({ id: 'new', kind: 'memory', text: '新记忆', sources: [] }).dictVersion, 'v6');
   assert.equal(reopened.db.prepare('SELECT count(*) AS n FROM completed_rounds').get().n, 0, 'migration does not infer completion');
   assert.equal(reopened.db.prepare('SELECT count(*) AS n FROM preinject_choices').get().n, 0);
 });

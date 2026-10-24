@@ -47,7 +47,7 @@ test('review queues and day projections convert metadata but never convert quote
   assert.equal(store.getRaw('old').recordedAt, '2026-10-13T16:05:00.123Z');
 });
 
-test('B3 self-report and decision times are local, with unchanged declaration and persisted metadata', t => {
+test('compact B3 self-report time is local, with unchanged declaration and persisted decision metadata', t => {
   const { store, tools } = fixture(t);
   const input = { id: 'like-night', action: 'set', topic: '夜晚', stance: 'like', text: '我喜欢夜晚，尤其原文写的 16:05Z。', reason: '我的自述' };
   // Use the existing preference action schema, including its normal attribution.
@@ -57,7 +57,7 @@ test('B3 self-report and decision times are local, with unchanged declaration an
   const payload = JSON.parse(rendered.slice(rendered.indexOf('\n') + 1));
   assert.equal(payload.timeZone, 'Asia/Shanghai');
   assert.equal(payload.items[0].recordedAt, '2026-10-22T00:05:00.123+08:00');
-  assert.equal(payload.items[0].decision.asOf, '2026-10-22T00:05:00.123+08:00');
+  assert.equal(payload.items[0].decision, undefined, 'detailed decision is read on demand');
   assert.equal(payload.items[0].text, input.text);
   assert.deepEqual(store.getEntry('like-night'), before);
 });

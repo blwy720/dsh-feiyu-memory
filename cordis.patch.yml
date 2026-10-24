@@ -14,6 +14,10 @@
         coreMaxChars: 2400
         preferenceMaxChars: 1600
         recentTurnMaxChars: 8000
+        toolMode: compact
+        autoRecall: true
+        recallLimit: 5
+        recallMaxChars: 2400
         backupEnabled: false
         backupDir: ''
         backupIntervalDays: 1

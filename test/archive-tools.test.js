@@ -221,7 +221,7 @@ test('v0.5 CLI exposes structured A3, declared coverage and reviewed A2 logical 
       assert.equal(result.status, 0, result.stderr || result.stdout);
       return JSON.parse(result.stdout);
     };
-    assert.equal(run('doctor').moduleVersion, '0.5.2');
+    assert.equal(run('doctor').moduleVersion, '0.6.0');
     const source = { rawId: 'raw', quote: '关键资料在指定目录。', support: 'supports' };
     run('append', [], { id: 'raw', pool: 'a', role: 'user', sessionId: 'synthetic', text: source.quote, recordedAt: '2000-01-01T00:00:00Z' });
     run('write', [], { id: 'a2', kind: 'memory', statementType: 'fact', text: '归纳资料位置。', sources: [source], recordedAt: '2000-01-02T00:00:00Z' });
@@ -246,6 +246,6 @@ test('v0.5 CLI exposes structured A3, declared coverage and reviewed A2 logical 
     run('a3-write', [], { requestId: 'cli-a3-revoke', id: 'a3', expectedVersion: 1, action: 'revoke', reason: '暂不作为当前归纳' });
     assert.equal(run('a3-list', ['--status', 'active']).total, 0);
     assert.equal(run('self-review', ['--action', 'history', '--id', 'a3']).items[0].type, 'a3');
-    assert.equal(run('dict').version, 'v5');
+    assert.equal(run('dict').version, 'v6');
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });

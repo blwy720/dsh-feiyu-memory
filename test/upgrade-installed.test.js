@@ -66,7 +66,7 @@ test('opt-in: actual previous installed package migrates immutable data without 
   const before = digest(old);
   old.close();
   const updated = new MemoryStore(options); handles.push(updated);
-  assert.equal(updated.metadata().schema, 6);
+  assert.equal(updated.metadata().schema, 7);
   assert.deepEqual(digest(updated), before);
   assert.equal(updated.getRaw('source').text, '我是肥鱼的主人，阿明是我的朋友。');
   assert.equal(updated.listEntries({ pool: 'c' }).length, supportsPools ? 2 : 0);

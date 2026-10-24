@@ -137,7 +137,7 @@ test('B returns bounded date-role-hour counts and never pretends to search messa
   assert.throws(() => api.memory_read({ id: 'b-user', pool: 'b' }), /没有正文/);
 });
 
-test('dictionary tool serves v5 while leaving the immutable v1/v2/v3/v4 dictionaries unchanged', t => {
+test('dictionary tool serves v6 while leaving the immutable v1/v2/v3/v4/v5 dictionaries unchanged', t => {
   const { store, api } = fixture(t);
   const oldPath = join(store.dataDir, 'dict', 'v1.md');
   const oldText = readFileSync(oldPath, 'utf8');
@@ -147,9 +147,12 @@ test('dictionary tool serves v5 while leaving the immutable v1/v2/v3/v4 dictiona
   const v3Text = readFileSync(v3Path, 'utf8');
   const v4Path = join(store.dataDir, 'dict', 'v4.md');
   const v4Text = readFileSync(v4Path, 'utf8');
+  const v5Path = join(store.dataDir, 'dict', 'v5.md');
+  const v5Text = readFileSync(v5Path, 'utf8');
   const dictionary = api.memory_dict();
-  assert.equal(dictionary.version, 'v5');
-  assert.equal(dictionary.text, readFileSync(join(store.dataDir, 'dict', 'v5.md'), 'utf8'));
+  assert.equal(dictionary.version, 'v6');
+  assert.equal(dictionary.moduleVersion, '0.6.0');
+  assert.equal(dictionary.text, readFileSync(join(store.dataDir, 'dict', 'v6.md'), 'utf8'));
   assert.match(dictionary.text, /A2/);
   assert.match(dictionary.text, /有向边/);
   store.flush();
@@ -157,8 +160,9 @@ test('dictionary tool serves v5 while leaving the immutable v1/v2/v3/v4 dictiona
   assert.equal(readFileSync(v2Path, 'utf8'), v2Text);
   assert.equal(readFileSync(v3Path, 'utf8'), v3Text);
   assert.equal(readFileSync(v4Path, 'utf8'), v4Text);
+  assert.equal(readFileSync(v5Path, 'utf8'), v5Text);
   const entry = api.memory_write({ statementType: 'fact', kind: 'memory', text: '合成未验证条目' });
-  assert.equal(entry.dictVersion, 'v5');
+  assert.equal(entry.dictVersion, 'v6');
 });
 
 test('B3 preferences are self-reports with a dedicated CAS/idempotent API, separate from user memories and C', t => {

@@ -60,7 +60,14 @@ async function fixture(t) {
   await ctx.plugin(WebServer, { host: '127.0.0.1', port: 0, compression: 'none' });
   await ctx.plugin(connectionModule);
   const carrier = ctx.get('connection');
-  const origin = ctx.get('webServer').getOrigin();
+  const webServer = ctx.get('webServer');
+  // Newer host-webserver releases expose the bound host/port, and leave URL
+  // composition to the application. Older supported releases had getOrigin().
+  // Both paths refer only to this fixture's fresh loopback listener.
+  const origin = typeof webServer.getOrigin === 'function' ? webServer.getOrigin()
+    : `http://${webServer.host}:${webServer.port}`;
+  assert.equal(new URL(origin).hostname, '127.0.0.1');
+  assert.ok(Number(new URL(origin).port) > 0);
   const launch = new URL(carrier.authenticatedUrl(origin));
   let cookie;
   assert.equal(carrier.authorizeIndex({
@@ -159,9 +166,29 @@ test('opt-in: actual DSH rejects cross-origin, cross-site and untrusted-host bac
   await desktop.json();
 });
 
-test('opt-in: actual DSH denies non-owner peers on all exact Fetch backup routes', integration, async t => {
+test('opt-in: actual DSH admits only its owner/operator for all exact Fetch backup routes', integration, async t => {
   const f = await fixture(t);
   const { owned } = await registerDirect(t, f);
+  if (typeof f.carrier.createPeer !== 'function') {
+    // The current carrier has exactly one operator and no caller-selected
+    // principal. Authentication happens before its internal Fetch dispatcher;
+    // supplying an arbitrary second fetch() argument would not test admission.
+    assert.ok(f.carrier.operator);
+    const admitted = f.carrier.admit({ method: 'GET', url: prefix + '/status',
+      headers: { host: new URL(f.origin).host, cookie: f.cookie } });
+    assert.equal(admitted.peer, f.carrier.operator);
+    for (const route of owned.routes) {
+      const args = argumentsFor(route);
+      const response = await fetch(f.origin + route.path, { ...args, headers: { ...args.headers,
+        'x-peer-id': f.carrier.operator.id, 'x-principal': 'owner' } });
+      assert.equal(response.status, 401, route.path);
+      await response.arrayBuffer();
+    }
+    assert.equal(f.counts.size, 0, 'a forged operator label must not bypass carrier authentication');
+    return;
+  }
+  // Earlier supported carriers exposed multiple peers and performed the
+  // owner check at exact Fetch dispatch. Retain that integration assertion.
   const shared = f.carrier.createSharedFetchHandler('/api');
   const nonOwner = f.carrier.createPeer({ principal: { kind: 'test-non-owner' } });
   t.after(() => nonOwner.dispose());

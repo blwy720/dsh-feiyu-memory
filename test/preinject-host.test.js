@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { pathToFileURL } from 'node:url';
-import plugin, { Config, createHostAdapter, captureId, RECENT_TURN_SECTION, CORE_SECTION, PREFERENCE_SECTION } from '../lib/index.js';
+import plugin, { Config, createHostAdapter, captureId, RECENT_TURN_SECTION, CORE_SECTION, PREFERENCE_SECTION, WAKE_SECTION } from '../lib/index.js';
 
 function fixture(t, overrides = {}) {
   const dataDir = mkdtempSync(join(tmpdir(), 'feiyu-recent-host-'));
@@ -41,7 +41,7 @@ function fixture(t, overrides = {}) {
   };
   const start = (agent, turn = 1) => emit(agent, 'turn/start', { turn });
   const claim = (agent, turn = 1, source = { kind: 'user' }) => handlers.get('agent/inbox/claimed')({ agent, turn,
-    message: { role: 'user', source, get content() { throw new Error('claim handler must never read content'); } } });
+    message: { id: `claimed-${turn}`, role: 'user', source, content: [] } });
   const user = (agent, text, id = 'user', extra = []) => emit(agent, 'user/message', { id, role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text }, ...extra] });
   const answer = (agent, text, { id = 'assistant', turn = 1, interrupted = false, extra = [] } = {}) => emit(agent, 'assistant/message',
     { turn, interrupted, message: { id, role: 'assistant', content: [{ type: 'text', text }, ...extra] } });
@@ -54,6 +54,33 @@ function fixture(t, overrides = {}) {
   return { ctx, config, agents, sessions, roots, handlers, definitions, reads, add, emit, start, claim, user, answer, end, round, assemble, recent,
     get store() { return adapter.store; }, get adapter() { return adapter; }, restart() { adapter.close(); adapter = createHostAdapter(ctx, config); } };
 }
+
+test('current human claim recalls a topic before the input is committed, without capturing the prompt', async t => {
+  const f = fixture(t), target = f.add('claim-recall');
+  f.store.appendRaw({ id: 'comfy-source', pool: 'a', sessionId: 'yesterday', role: 'user', text: 'ComfyUI 启动前需要进入虚拟环境。' });
+  f.start(target);
+  f.handlers.get('agent/inbox/claimed')({ agent: target, turn: 1, message: { id: 'current', role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: 'ComfyUI 怎么启动' }] } });
+  const assembly = await f.assemble(target);
+  assert.match(assembly.sections.find(section => section.name === 'feiyu-memory:related-data').text, /comfy-source/);
+  assert.equal(f.store.listRaw().length, 1);
+  f.user(target, 'ComfyUI 怎么启动', 'current');
+  await f.assemble(target, assembly);
+  assert.equal(assembly.sections.filter(section => section.name === 'feiyu-memory:related-data').length, 1);
+  assert.ok(!JSON.parse(assembly.sections.find(section => section.name === 'feiyu-memory:related-data').text).items.some(item => item.sessionId === target.id));
+});
+
+test('compact host exposes six tools then enables exact legacy capabilities without executing them', async t => {
+  const f = fixture(t, { toolMode: 'compact' }), agent = f.add('compact');
+  assert.equal(f.definitions.size, 6);
+  assert.ok(!f.definitions.has('memory_core_write'));
+  const discovery = f.definitions.get('memory_tools');
+  const result = await discovery.execute({ names: ['memory_core_write', 'memory_read'] }, { agent });
+  assert.deepEqual(result.added, ['memory_core_write', 'memory_read']);
+  assert.equal(f.definitions.size, 8);
+  assert.equal(f.store.listEntries().length, 0);
+  await assert.rejects(discovery.execute({ names: ['run_code'] }, { agent }), /白名单/);
+  assert.match((await f.assemble(agent)).sections.find(section => section.name === WAKE_SECTION).text, /memory_tools/);
+});
 
 test('first human claim before committed user message selects one durable latest A1 round; later turns remove DATA', async t => {
   const f = fixture(t), source = f.add('source'), target = f.add('target');

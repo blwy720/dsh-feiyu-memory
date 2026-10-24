@@ -167,7 +167,7 @@ for (const schema of [1, 2]) test(`schema ${schema} migrates old entries and leg
     fs.writeFileSync(path.join(folder, 'user-note.txt'), '不是本模块投影，不得删除');
   }
   const reopened = open();
-    assert.equal(reopened.metadata().schema, 6);
+    assert.equal(reopened.metadata().schema, 7);
   assert.equal(reopened.getEntry('old-edge').pool, 'a2');
   assert.equal(reopened.db.prepare('SELECT json FROM entries WHERE id=?').get('old-edge').json, canonical);
   assert.equal(reopened.listEntries({ pool: 'c' }).length, 0);
@@ -224,9 +224,9 @@ test('v2 dictionary stays immutable while new versions use v4 and v1 bytes remai
   const { store, open, dataDir } = fixture(t);
   const v1 = fs.readFileSync(path.join(dataDir, 'dict/v1.md'), 'utf8');
   assert.equal(fs.readFileSync(path.join(dataDir, 'dict/v2.md'), 'utf8'), DICTIONARY_V2);
-  assert.equal(entity(store, 'user').dictVersion, 'v5');
+  assert.equal(entity(store, 'user').dictVersion, 'v6');
   promote(store, 'user');
-  assert.equal(store.getEntry('user').dictVersion, 'v5');
+  assert.equal(store.getEntry('user').dictVersion, 'v6');
   store.close();
   const reopened = open();
   assert.equal(fs.readFileSync(path.join(dataDir, 'dict/v1.md'), 'utf8'), v1);

@@ -228,7 +228,7 @@ test('actual released 0.4 schema 5 migration keeps old inference JSON and dictio
   const before = old.db.prepare('SELECT id,version,json FROM entries ORDER BY id,version').all();
   const dictionary = fs.readFileSync(path.join(dataDir, 'dict/v4.md'), 'utf8');
   old.close();
-  const upgraded = open(); assert.equal(upgraded.metadata().schema, 6);
+  const upgraded = open(); assert.equal(upgraded.metadata().schema, 7);
   assert.deepEqual(upgraded.db.prepare('SELECT id,version,json FROM entries ORDER BY id,version').all(), before);
   assert.equal(upgraded.getEntry('a3').legacyInference, true);
   assert.equal(upgraded.getEntry('a3').statementType, 'inference');

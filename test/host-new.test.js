@@ -147,7 +147,8 @@ test('opt-in actual DSH: profile roots share data, durable children are rejected
     assert.equal(assembly.sections.filter(item => item.name === WAKE_SECTION).length, 1);
     const core = assembly.sections.filter(item => item.name === CORE_SECTION);
     assert.equal(core.length, 1);
-    assert.match(core[0].text, /合成主人节点/);
+    assert.match(core[0].text, /"total":1/);
+    assert.equal((await execute(agent, 'memory_read', { id: written.value.id })).value.text, '合成主人节点');
     assert.doesNotMatch(assembly.sections.find(item => item.name === WAKE_SECTION).text, /合成主人节点/);
     const preferences = assembly.sections.filter(item => item.name === PREFERENCE_SECTION);
     assert.equal(preferences.length, 1);
@@ -168,19 +169,19 @@ test('every new session assembly includes separate bounded core DATA and fixed r
   assert.ok(assembly.sections.every(item => item.interpolate === false));
   const wake = assembly.sections[0].text;
   assert.ok(wake.length <= 1800);
-  assert.match(wake, /memory_review_queue/);
+  assert.match(wake, /memory_review/);
   assert.match(wake, /A1/);
   assert.doesNotMatch(wake, /最近两天 A1/);
-  assert.match(wake, /C明文仅关系网/);
+  assert.match(wake, /C仅关系网/);
   assert.doesNotMatch(wake, /due-original|due text/);
   assert.ok(assembly.sections[1].text.length <= 2400);
   assert.equal(f.store.listReviewQueue({ limit: 1 }).total, before.total);
 });
 
-test('all twenty schemas expose bounded review, graph and pools; own review outputs stay derivative', async t => {
+test('legacy and compact entry schemas expose bounded review, graph and pools; own outputs stay derivative', async t => {
   const f = fixture(t), agent = f.add('root');
-  assert.equal(f.tools.size, 20);
-  assert.deepEqual(toolSchemas.memory_read.properties.kind.enum, ['raw', 'memory', 'doing', 'entity', 'relation', 'preference', 'a3', 'b2']);
+  assert.equal(f.tools.size, 23);
+  assert.deepEqual(toolSchemas.memory_read.properties.kind.enum, ['raw', 'memory', 'doing', 'entity', 'relation', 'preference', 'a3', 'b2', 'knowledge']);
   assert.deepEqual(toolSchemas.memory_core.properties.category.enum, ['identity', 'relationship']);
   const queue = await f.execute(agent, 'memory_review_queue', {});
   assert.equal(queue.total, 0);

@@ -61,7 +61,7 @@ test('schema-one migration preserves originals and reports old receipt gaps with
   store.close();
   const reopened = new MemoryStore(args);
   try {
-    assert.equal(reopened.metadata().schema, 6);
+    assert.equal(reopened.metadata().schema, 7);
     assert.equal(reopened.getRaw('preserved').text, 'synthetic original');
     const finding = reopened.audit().find(item => item.rawId === 'legacy-gap');
     assert.equal(finding.deletionAuthorization, 'unproven');

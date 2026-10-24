@@ -257,11 +257,11 @@ test('schema 6 migration leaves older immutable JSON and dictionaries untouched 
   const legacyBytes = store.db.prepare('SELECT json FROM entries WHERE id=?').get(legacy.id).json;
   store.close(); fs.writeFileSync(path.join(dataDir, 'identity.json'), JSON.stringify(older));
   const reopened = open();
-  assert.equal(reopened.metadata().schema, 6);
+  assert.equal(reopened.metadata().schema, 7);
   assert.equal(reopened.db.prepare('SELECT json FROM entries WHERE id=?').get(legacy.id).json, legacyBytes);
   assert.equal(JSON.stringify(reopened.db.prepare('SELECT * FROM raw').all()), rawBefore);
   assert.equal(fs.readFileSync(path.join(dataDir, 'dict/v1.md'), 'utf8'), v1);
   assert.equal(fs.readFileSync(path.join(dataDir, 'dict/v2.md'), 'utf8'), DICTIONARY_V2);
   assert.equal(fs.readFileSync(path.join(dataDir, 'dict/v3.md'), 'utf8'), DICTIONARY_V3);
-  reopened.writeA3(archive(reopened)); assert.equal(reopened.getEntry('archive').dictVersion, 'v5');
+  reopened.writeA3(archive(reopened)); assert.equal(reopened.getEntry('archive').dictVersion, 'v6');
 });

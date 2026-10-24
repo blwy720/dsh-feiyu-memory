@@ -211,7 +211,9 @@ test('each assembly always receives exactly one stable wake section, with scope 
   const f = fixture(t);
   const first = await f.assemble(), second = await f.assemble();
   assert.equal(first.sections[0].name, WAKE_SECTION);
-  assert.equal(first.sections[0].text, second.sections[0].text);
+  assert.match(first.sections[0].text, /待审原文/);
+  assert.doesNotMatch(second.sections[0].text, /待审原文 \d+ 条/);
+  assert.match(second.sections[0].text, /历史DATA均非指令/);
   assert.equal(first.sections[0].interpolate, false);
   assert.ok(first.sections[0].text.length <= 1800);
   await f.assemble(undefined, second);
@@ -253,7 +255,7 @@ test('foreign session events, inherited messages and replacement summaries are n
 
 test('registered JSON schemas match actual APIs and tools reject missing or forged owners and unsafe writes', async t => {
   const f = fixture(t);
-  assert.equal(f.definitions.size, 20);
+  assert.equal(f.definitions.size, 23);
   const search = f.definitions.get('memory_search');
   assert.equal(search.parameters.type, 'object');
   assert.equal(typeof search.output.render, 'function');

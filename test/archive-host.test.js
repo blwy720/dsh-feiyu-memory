@@ -39,7 +39,7 @@ function archiveRequest(parent) {
 }
 
 test('A3 schema requires declared coverage, forbids raw sources and exposes only the six final tools', () => {
-  assert.equal(Object.keys(toolSchemas).length, 20);
+  assert.equal(Object.keys(toolSchemas).length, 23);
   for (const name of ['memory_search', 'memory_list', 'memory_read']) assert.ok(toolSchemas[name].properties.pool.enum.includes('a3'));
   assert.equal(toolSchemas.memory_graph.properties.pool.enum.includes('a3'), false);
   assert.equal(toolSchemas.memory_write.properties.pool.enum.includes('a3'), false);
@@ -138,7 +138,9 @@ test('opt-in actual DSH ToolRuntime accepts declared A3 coverage and exact A2 li
   assert.equal(discovery.pool, 'b2');
   assert.equal((await execute('memory_read', { id: discovery.id, kind: 'b2' })).evidenceStatus, 'external_reference');
   const assembly = await ctx.systemPrompt.assemble({ agent, scope: agent });
-  assert.doesNotMatch(assembly.sections.map(section => section.text).join('\n'), /ARCHIVE_BODY_ONLY|B2_PRIVATE_DISCOVERY/);
+  assert.doesNotMatch(assembly.sections.find(section => section.name === WAKE_SECTION).text, /ARCHIVE_BODY_ONLY|B2_PRIVATE_DISCOVERY/);
+  const related = assembly.sections.find(section => section.name === 'feiyu-memory:related-data');
+  if (related) assert.ok(JSON.parse(related.text).items.every(item => item.id !== rawId), 'current input cannot be its own recalled source');
   await fiber.dispose();
 });
 
@@ -156,13 +158,13 @@ test('normal assembly retires only approved due A2 versions, keeps pending items
   assert.equal(f.store.getEntry(approved.id).retired, true);
   assert.equal(Boolean(f.store.getEntry(pending.id).retired), false);
   assert.equal(f.store.listEntries({ pool: 'a3' }).length, 0);
-  assert.match(assembly.sections[0].text, /A2待处理 1 条/);
+  assert.match(assembly.sections[0].text, /A2待审 1 条/);
   assert.equal((await f.execute('memory_read', { id: approved.id, version: 1 })).text, '已经明确审核');
   const retried = await f.execute('memory_a2_cleanup', { apply: true });
   assert.equal(retried.retired, 0);
 });
 
-test('human recall cues contribute only fixed guidance, without querying memories or copying the user message', async t => {
+test('human recall cues keep one route and never inject the current raw message as its own history', async t => {
   const f = fixture(t);
   f.store.recordRecall = () => assert.fail('a cue must not itself perform a retrieval tool call');
   for (const [index, cue] of ['我记得', '之前', '上次', '以前', '去年'].entries()) {
@@ -171,7 +173,8 @@ test('human recall cues contribute only fixed guidance, without querying memorie
     const assembly = await f.assemble();
     await f.assemble(assembly);
     assert.equal(assembly.sections.filter(section => section.name === RECALL_SECTION).length, 1);
-    assert.doesNotMatch(assembly.sections.map(section => section.text).join('\n'), /PRIVATE_CUE_BODY/);
+    const related = assembly.sections.find(section => section.name === 'feiyu-memory:related-data');
+    if (related) assert.ok(!JSON.parse(related.text).items.some(item => item.id === captureId('archive-fish', 'main', `cue-${index}`)));
     assert.match(assembly.sections.find(section => section.name === RECALL_SECTION).text, /按memory_search\/memory_list→memory_read核对/);
     f.event('turn/end', { turn: index + 1 });
     assert.equal((await f.assemble()).sections.some(section => section.name === RECALL_SECTION), false);
