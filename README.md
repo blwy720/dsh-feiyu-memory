@@ -1,4 +1,4 @@
-# 肥鱼记忆模块 v0.7.0
+# 肥鱼记忆模块 v0.7.1
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue)](https://polyformproject.org/licenses/noncommercial/1.0.0)
 
@@ -26,7 +26,7 @@ v0.6.1 修复人物名称显示、低预算批读和 B3 引用定位，补齐 A1
 - **按经历回忆**：每轮相关召回后附上命中原话所在经历的卡片，优先放她写过的体会。短句会借用当前经历最近几句话作话题，去掉字面重复的旧话；同一会话一小时内的原话不占召回名额。
 - **主动睡眠（默认关闭）**：打开 `sleepEnabled` 后，在 DeepSeek 闲时、无人对话 30 分钟且没有进行中的一轮时，开一个独立会话邀请她回看没看过的经历。这是邀请不是任务，有次数与写入上限，真人一回来就让路。会使用模型、产生 API 费用；尚未在真实环境中触发验证。
 
-模型工具是 `memory_episode`（精简模式下用 `memory_tools` 启用），审查队列可用 `memory_review_queue({"groupBy":"turn"})` 按完整一轮问答查看。schema 仍为 7，新表追加创建，升级无需迁移、无需重新导入；换回 0.6.2 也能打开同一个库。
+模型工具是 `memory_episode`（精简模式下用 `memory_tools` 启用），审查队列可用 `memory_review_queue({"groupBy":"turn"})` 按完整一轮问答查看，工具输出折叠在一旁，不占阅读量。schema 仍为 7，新表追加创建，升级无需迁移、无需重新导入；换回 0.6.2 也能打开同一个库。
 
 ## 在界面中管理备份
 
