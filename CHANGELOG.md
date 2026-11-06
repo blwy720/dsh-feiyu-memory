@@ -2,6 +2,13 @@
 
 本文件描述版本行为。实际运行时、平台和测试结果见 [验收记录](docs/acceptance.md)，不以历史版本的测试数量代替本版验收。当前许可证见 [LICENSE](LICENSE)。
 
+## 0.7.2 — 2026-11-06
+
+- **审过的原话不再自动删除**：满 168 小时且已自审的 A1 原文退出活动池时一律转入保留原文（originals），经历和回看都还在。管理员之前明确作出的删除决定照旧，`purge-a2` 仍由管理员显式执行。
+- **按整轮提交审查（turnRefs）**：`memory_review` 可以写 `turnRefs: [{ sessionId, turnId }]`，插件展开成每轮仍待审的原文，已审、未到期的自动排除；与 `rawIds` 二选一。`omissions` 也可以写 `{ turnRefs, reason }` 让整轮共用一个理由。找不到这一轮、这一轮已没有待审原文时明确报错。
+- 超过 20 条且没有新条目时自动分批提交；同一 requestId 重试不会重复计数。返回 `coveredCount`、`coveredRawIds`、`citedCount`、`omittedCount` 和每轮被排除的条数，方便对账。
+- 按轮队列的 `submit` 直接给 `turnRef`，不再列出并截断原文 ID。
+
 ## 0.7.1 — 2026-11-06
 
 - **按轮审查不再被工具输出撑大**：`memory_review_queue({ groupBy: 'turn' })` 的 `items` 只列对话，工具输出折叠进 `tools`（条数、字数、用了哪些工具、rawId）。工具输出仍在本轮待审中，不会被自动略过。
