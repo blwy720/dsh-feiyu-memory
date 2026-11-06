@@ -1,10 +1,10 @@
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 const root = fileURLToPath(new URL('../', import.meta.url));
 let checked = 0;
-for (const dir of ['lib','scripts','test']) {
+for (const dir of ['lib','scripts','test'].filter(d => existsSync(join(root, d)))) {
   for (const file of readdirSync(join(root,dir))) {
     if (!file.endsWith('.js')) continue;
     const result = spawnSync(process.execPath,['--check',join(root,dir,file)],{encoding:'utf8'});

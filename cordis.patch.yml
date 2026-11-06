@@ -22,3 +22,4 @@
         backupDir: ''
         backupIntervalDays: 1
         backupSchedule: interval
+        sleepEnabled: false

@@ -1,8 +1,12 @@
-# 肥鱼记忆模块 v0.6.1
+# 肥鱼记忆模块 v0.7.0
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue)](https://polyformproject.org/licenses/noncommercial/1.0.0)
 
 供 DSH 使用的独立记忆插件，使用 Node.js 24+ 的 `node:sqlite`，没有 npm 运行时依赖。Windows 和 Android 使用同一套代码；各设备默认使用独立的数据目录与身份，不自动同步、合并记忆。
+
+**v0.7.0 新增"海马体"**：把对话按时间切成一段段经历，回忆时带上经历的前后文，让肥鱼自己回看、起名、写体会。原理见下方 [海马体](#海马体)。
+
+v0.6.2 新增供独立“肥鱼记忆全景”插件使用的[只读查看接口](docs/viewer-api.md)。浏览不调用记忆工具、不新增检索日志、不改变数据库 schema；原记忆配置继续使用。新增查看联动目前完成 Windows 桌面 0.2.1-rc.3 隔离验证，手机的本次联动尚未验证。
 
 **安装插件是安装程序；导入记忆是恢复数据。** 安装包不包含个人记忆。安装、配置、导出与恢复步骤见 [安装与导入](docs/安装与导入.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。支持 DSH **0.2.1-rc.2 / 0.2.1-rc.3**；Windows 与 Android 使用同一安装包，实际验证的平台、宿主版本和范围见 [验收记录](docs/acceptance.md)。
 
@@ -11,6 +15,18 @@
 v0.6.0 增加 D 经验池、每轮相关记忆召回、批量阅读与提炼、事项线、轻量复核和可选精简工具模式。常用操作和 JSON 示例见[工具与经验池](docs/工具与经验池.md)。它帮助肥鱼找到并整理已有资料；相关性分数、逐字引文和“已验证”声明都不等于程序已经证明现实中的事实。
 
 v0.6.1 修复人物名称显示、低预算批读和 B3 引用定位，补齐 A1 原文事项关联及工具启用提示，并减少泛词引发的无关召回。从 v0.6.0 升级继续使用 schema 7 和字典 v6，旧记忆无需重新导入。
+
+## 海马体
+
+把记忆插件看成大脑：原有的各个池是仓库（皮层），保存原话和整理过的条目；v0.7.0 加的海马体是仓管，只做机械的事——把对话编成一段段经历、建索引、回忆时带出前后文、空闲时邀请回看。**意义由肥鱼自己决定，程序不替她判断。**
+
+- **原话不动**：海马体不改、不删任何原文，只在原文之上另记一层。
+- **经历是候选**：程序按会话、回合和时间切分（间隔超过一小时、会话边界、明确的转折词才断开；话题或活动变化只做标记）。切分随时重算、不落库，默认生效；只有她自己的决定会被保存。
+- **她的层**：她可以拆分、合并、撤销断点，给经历起名、写体会（标明是亲历、复述还是混合），把几段经历连成一件事，收回写过的体会或名字（须写理由，留下痕迹）。这一层只能追加；只读查看接口不读取这一层。
+- **按经历回忆**：每轮相关召回后附上命中原话所在经历的卡片，优先放她写过的体会。短句会借用当前经历最近几句话作话题，去掉字面重复的旧话；同一会话一小时内的原话不占召回名额。
+- **主动睡眠（默认关闭）**：打开 `sleepEnabled` 后，在 DeepSeek 闲时、无人对话 30 分钟且没有进行中的一轮时，开一个独立会话邀请她回看没看过的经历。这是邀请不是任务，有次数与写入上限，真人一回来就让路。会使用模型、产生 API 费用；尚未在真实环境中触发验证。
+
+模型工具是 `memory_episode`（精简模式下用 `memory_tools` 启用），审查队列可用 `memory_review_queue({"groupBy":"turn"})` 按完整一轮问答查看。schema 仍为 7，新表追加创建，升级无需迁移、无需重新导入；换回 0.6.2 也能打开同一个库。
 
 ## 在界面中管理备份
 
@@ -156,7 +172,7 @@ C、B3 和每轮相关召回各有独立、带预算的 DATA 区。C/B3 使用�
 
 ## 工具与 CLI
 
-精简模式开始只显示 `memory_search`、`memory_fetch`、`memory_prepare`、`memory_manage`、`memory_review` 和发现入口 `memory_tools`。调用 `memory_tools({"names":["memory_preference"]})` 按需开启；开启只注册工具，不执行写入，本次插件运行内有效。兼容模式启动时保留全部 23 个业务工具。完整用法见[工具与经验池](docs/工具与经验池.md)。
+精简模式开始只显示 `memory_search`、`memory_fetch`、`memory_prepare`、`memory_manage`、`memory_review` 和发现入口 `memory_tools`。调用 `memory_tools({"names":["memory_preference"]})` 按需开启；开启只注册工具，不执行写入，本次插件运行内有效。兼容模式启动时保留全部 24 个业务工具。完整用法见[工具与经验池](docs/工具与经验池.md)。
 
 | 用途 | 模型工具 |
 | --- | --- |
@@ -168,6 +184,7 @@ C、B3 和每轮相关召回各有独立、带预算的 DATA 区。C/B3 使用�
 | A2 清理审查 | `memory_a2_review_queue`、`memory_a2_review`、`memory_a2_cleanup` |
 | 关系网 | `memory_core`、`memory_core_write`、`memory_graph` |
 | 喜好、冲浪与更正 | `memory_preference`、`memory_b2_write`、`memory_correct` |
+| 经历（海马体） | `memory_episode` |
 
 CLI 在插件代码目录运行。下面只使用合成样例与新建演示库，不要将样例导入真实记忆：
 
@@ -206,6 +223,6 @@ node scripts/cli.js privacy-audit --data .memory/demo --instance demo
 
 SQLite 是权威数据；JSON、Markdown 与索引是可重建投影。若写入返回 `committed: true`、`projectionPending: true`，表示提交已成功、派生文件待修复，不应重复制造新版本。正常启动或 `rebuild` 可重试修复。
 
-开发验证使用 `npm test` 与 `npm run check`；真实运行时代码、旧包升级与平台专属用例的环境要求见 [宿主接入](docs/host-compatibility.md)。所有公开样例均为合成数据。程序测试不证明模型的长期遗漏率、事实判断或实际语义提炼已经合格。
+自动化测试在本地维护，公开仓库不包含测试文件；`npm run check` 仍可使用。v0.7.0 已在 Windows 桌面隔离环境中试用。真实运行时代码、旧包升级与平台专属用例的环境要求见 [宿主接入](docs/host-compatibility.md)。所有公开样例均为合成数据。程序测试不证明模型的长期遗漏率、事实判断或实际语义提炼已经合格。
 
 许可证为 [PolyForm Noncommercial 1.0.0](LICENSE)，具体使用与分发条件以许可证全文为准。代码包不附带个人记忆、备份、聊天记录、宿主凭据或个人绝对路径；分享备份前应自行确认其中的私人内容。

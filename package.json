@@ -1,6 +1,6 @@
 {
   "name": "dsh-feiyu-memory",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "肥鱼记忆：主动召回、D经验池、跨会话事项线与电脑／手机备份",
   "type": "module",
   "main": "./lib/index.js",
@@ -14,14 +14,13 @@
     "./cordis.patch.yml": "./cordis.patch.yml"
   },
   "bin": { "feiyu-memory": "./scripts/cli.js" },
-  "files": ["lib", "scripts", "test", "data/dict", "docs", "examples", "README.md", "CHANGELOG.md", "cordis.patch.yml"],
+  "files": ["lib", "scripts", "data/dict", "docs", "examples", "README.md", "CHANGELOG.md", "cordis.patch.yml"],
   "dsh": {
     "bundle": { "patch": "./cordis.patch.yml" },
     "client": { "platform": "web", "inject": ["@deepseek-ai/dsh-client-ui-renderer"] }
   },
   "engines": { "node": ">=24.0.0" },
   "scripts": {
-    "test": "node --test",
     "check": "node scripts/check.js",
     "benchmark": "node scripts/benchmark.js"
   },
