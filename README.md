@@ -1,4 +1,4 @@
-# 肥鱼记忆模块 v0.7.2
+# 肥鱼记忆模块 v0.7.3
 
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue)](https://polyformproject.org/licenses/noncommercial/1.0.0)
 

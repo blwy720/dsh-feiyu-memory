@@ -1,6 +1,6 @@
 # DSH 宿主接入与验证范围
 
-本文对应 v0.6.1（2026-10-24），支持 DSH **0.2.1-rc.2 / 0.2.1-rc.3**。Windows 和 Android 使用同一代码包。安装与数据恢复见 [安装与导入](安装与导入.md)。
+v0.7.3 已在 Windows 的 DSH 0.2.2-rc.5 宿主模块上用合成库验证根会话采集、子代理排除及备份状态接口。以下表格保留 v0.6.1 的兼容测试记录。Windows 和 Android 使用同一代码包。安装与数据恢复见 [安装与导入](安装与导入.md)。
 
 | DSH 版本 | 平台与已完成验证 |
 | --- | --- |
@@ -15,7 +15,7 @@
 | --- | --- |
 | 插件 | 无宿主 npm 运行时依赖；Standard Schema v1 Config，`apply` 返回 disposer。 |
 | `session/event` | 仅收已提交 append、当前 live session 对象、`isOwnSeq` 的自有消息，保持原始 text 块边界。 |
-| `AgentRegistry` | profile 模式通过 `roots()` 与 live 对象判定主会话；普通分叉不因 `parentSession` 自动排除。 |
+| 根会话 | profile 模式先核对宿主登记的会话、代理实例及委派标记。旧宿主核对 `agents.roots()` 的成员，新宿主要求 `subagents.rootOf(agent) === agent`。普通分叉可以有 `parentSession`。归属查询缺失或失败时，该会话跳过记忆访问。 |
 | 子代理 | 检查 `header.origin`、`delegationDepth`、`subagentDepth`，即使恢复成 runtime root 也不能进入主会话共享范围。 |
 | 工具 | 参数校验、调用 agent 所属验证与同一共享范围入口；原文管理员导入、正文释放及备份不注册模型工具。 |
 | `system-prompt/assemble` | 按固定 section 名替换，地图、C、B3、首轮 A1 与每轮相关召回分区；有界 DATA 不能变成执行指令。 |
